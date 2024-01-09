@@ -52,12 +52,14 @@ abstract class AppDataBase extends RoomDatabase {
                 @Override
                 public void run() {
                     Log.d("inCall","inside call back");
-                    transactionDao.insert(new Transaction("Income","Salary","no notes", new Date(),new Date().getTime(),200));
+         /*           transactionDao.insert(new Transaction("Income","Salary","no notes", new Date(),new Date().getTime(),200));
                     transactionDao.insert(new Transaction("Expense","Briyani","no notes",new Date(),new Date().getTime(),200));
                     transactionDao.insert(new Transaction("Income","Salary","no notes",new Date(),new Date().getTime(),200));
                     transactionDao.insert(new Transaction("Expense","Other","no notes",new Date(),new Date().getTime(),200));
                     transactionDao.insert(new Transaction("Income","Salary","no notes",new Date(),new Date().getTime(),200));
                     transactionDao.insert(new Transaction("Income","Salary","no notes",new Date(),new Date().getTime(),200.0));
+
+          */
                 }
             });
             Log.d("inCall","in call back");

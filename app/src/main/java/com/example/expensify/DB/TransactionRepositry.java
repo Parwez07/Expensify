@@ -81,18 +81,21 @@ public class TransactionRepositry {
 
     public LiveData<Double> getIncomeSumForMonth(String  date){
         Log.d("sum",transactionDao.getIncomeSumForMonth(date).getValue()+" in repo ");
-        Log.d("datedc",date+" repo");
        return transactionDao.getIncomeSumForMonth(date);
     }
     public  LiveData<Double> getExpenditureSumForMonth(String date){
 
         return transactionDao.getExpenditureSumForMonth(date);
     }
-
     public LiveData<Double> getSumByDate(Date selectedDate){
         Date startOfDay = getStartOfDay(selectedDate);
         Date endOfDay = getEndOfDay(selectedDate);
         Log.d("date" , startOfDay +" date "+endOfDay);
         return transactionDao.getSumByDate(startOfDay, endOfDay);
+    }
+
+    public LiveData<List<Transaction>> getTransactionByMonth(String date){
+
+        return transactionDao.getTransationsByMonth(date);
     }
 }

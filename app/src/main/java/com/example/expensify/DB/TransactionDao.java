@@ -44,4 +44,7 @@ public interface TransactionDao {
 
     @Query("SELECT * FROM Transactions WHERE date BETWEEN :firstDate AND :lastDate ORDER BY TYPE ")
     LiveData<List<Transaction>> getTransactionOfWeek(Date firstDate,Date lastDate);
+
+    @Query("SELECT * FROM Transactions WHERE strftime('%Y-%m', datetime(date/1000, 'unixepoch')) = :formattedDate order by createdAt desc")
+    LiveData<List<Transaction>> getTransationsByMonth(String formattedDate);
 }

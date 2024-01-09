@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Expensify" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Expensify" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/lavender</item>
         <item name="colorPrimaryVariant">@color/lavender</item>
         <item name="colorOnPrimary">@color/black</item>
@@ -11,7 +11,21 @@
 
         <!--        status bar color-->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+
     </style>
 
     <style name="Theme.Expensify" parent="Base.Theme.Expensify" />
+
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppmodelStyle</item>
+    </style>
+
+    <style name="AppmodelStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/dialoge_bg</item>
+    </style>
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/lavender</item>
+    </style>
 </resources>

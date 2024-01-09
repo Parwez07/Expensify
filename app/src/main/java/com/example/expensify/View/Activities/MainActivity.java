@@ -1,4 +1,4 @@
-package com.example.expensify.View.Activity;
+package com.example.expensify.View.Activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;

@@ -1,19 +1,23 @@
 package com.example.expensify.View.Activity.Fragment;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.expensify.Adapter.viewPagerAdapter;
+import com.example.expensify.Model.SharedViewModel;
 import com.example.expensify.R;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
@@ -32,7 +36,8 @@ public class HistoryFragment extends Fragment {
     TextView currDate;
     ImageView btnPrev, btnNext;
     Calendar calendar;
-    DateChangeListener dateChangeListener;
+
+    SharedViewModel sharedViewModel;
 
 
     public HistoryFragment() {
@@ -65,16 +70,50 @@ public class HistoryFragment extends Fragment {
         viewPagerAdapter adapter = new viewPagerAdapter(getChildFragmentManager(), getLifecycle());
         viewPager2.setAdapter(adapter);
 
+        currDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
+                datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                        calendar.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
+                        calendar.set(Calendar.MONTH, datePicker.getMonth());
+                        calendar.set(Calendar.YEAR, datePicker.getYear());
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM YYYY");
+                        String dateToShow = dateFormat.format(calendar.getTime());
+                        currDate.setText(dateToShow);
+
+                        if(viewPager2.getCurrentItem()==0)
+                            updateDate();
+                        else if (viewPager2.getCurrentItem()==1)
+                            updateWeek();
+                        else
+                            updateMonthly();
+                    }
+                });
+                datePickerDialog.show();
+            }
+        });
+
+        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+
         viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
 
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 if (position == 0) {
+                    calendar = Calendar.getInstance();
                     updateDate();
                 }
                 else if (position == 1) {
+                    calendar = Calendar.getInstance();
                     updateWeek();
+                }
+                else {
+                    calendar = Calendar.getInstance();
+                    updateMonthly();
                 }
             }
 
@@ -98,11 +137,11 @@ public class HistoryFragment extends Fragment {
                 Log.d("tab",tab.getContentDescription()+"");
             }
         });
+
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Handle btnPrev click
-                Toast.makeText(getContext(), "prev clicked", Toast.LENGTH_SHORT).show();
                 if (viewPager2.getCurrentItem() == 0) {
                     calendar.add(Calendar.DATE, -1);
                     updateDate();
@@ -111,9 +150,13 @@ public class HistoryFragment extends Fragment {
                     Log.d("weekly", "pre click " + calendar.getTime());
                     updateWeek();
                 }
+                else{
+                    calendar.add(Calendar.MONTH,-1);
+                    Log.d("monthly","pre click "+calendar.MONTH);
+                    updateMonthly();
+                }
             }
         });
-
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,6 +167,11 @@ public class HistoryFragment extends Fragment {
                 } else if (viewPager2.getCurrentItem() == 1) {
                     calendar.add(Calendar.DATE, 6);
                     updateWeek();
+                }
+                else{
+                    calendar.add(Calendar.MONTH,1);
+                    Log.d("monthly","pre click "+calendar.MONTH);
+                    updateMonthly();
                 }
             }
         });
@@ -136,11 +184,8 @@ public class HistoryFragment extends Fragment {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/YYYY");
         SimpleDateFormat amPm = new SimpleDateFormat("hh mm a");
         currDate.setText(dateFormat.format(calendar.getTime()));
-        if(dateChangeListener !=null){
-            dateChangeListener.onDateChanged(calendar.getTime());
-        }else{
-            Toast.makeText(getContext(),"datechange is null",Toast.LENGTH_SHORT).show();
-        }
+        sharedViewModel.setSelectedDate(calendar.getTime());
+
     }
 
     public void updateWeek() {
@@ -149,7 +194,6 @@ public class HistoryFragment extends Fragment {
         int day = selectedDate.get(Calendar.DAY_OF_WEEK) - 1;
         selectedDate.add(selectedDate.DATE, -day);
         Date firstDateOfWeek = selectedDate.getTime();
-
         selectedDate.add(selectedDate.DATE, 6);
         Date lastDateOfWeek = selectedDate.getTime();
 
@@ -158,23 +202,16 @@ public class HistoryFragment extends Fragment {
         String formattedLastDate = outputFormat.format(lastDateOfWeek);
         String week = formattedFirstDate + " to " + formattedLastDate;
         currDate.setText(week);
-        if (dateChangeListener != null) {
-            Log.d("dateChange","next tak sahi "+calendar.getTime());
-            dateChangeListener.onDateChanged(calendar.getTime());
-        } else {
-            Toast.makeText(getContext(), "dateChange is null", Toast.LENGTH_SHORT).show();
-        }
+        sharedViewModel.setSelectedDate(calendar.getTime());
         Log.d("weekly", sd.getTime() + " " + formattedFirstDate + " " + formattedLastDate);
     }
 
-    public interface DateChangeListener {
-        void onDateChanged(Date newDate);
-    }
-
-    public void setDateChangeListener(DateChangeListener listener) {
-        Log.d("dateChange","setChange call ");
-        this.dateChangeListener = listener;
-
+    public void updateMonthly(){
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMM YYYY");
+        String month = monthFormat.format(calendar.getTime());
+        Log.d("month",month);
+        currDate.setText(month);
+        sharedViewModel.setSelectedDate(calendar.getTime());
     }
 
 

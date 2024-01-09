@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.expensify.Adapter.HistoryTransactionAdapter;
 import com.example.expensify.DB.TransactionViewModel;
+import com.example.expensify.Model.SharedViewModel;
 import com.example.expensify.Model.Transaction;
 import com.example.expensify.R;
 
@@ -22,13 +23,14 @@ import java.util.Date;
 import java.util.List;
 
 
-public class WeeklyFragment extends Fragment implements HistoryFragment.DateChangeListener {
+public class WeeklyFragment extends Fragment {
 
     RecyclerView rvWeekly;
     private TransactionViewModel transactionViewModel;
     HistoryTransactionAdapter historyTransactionAdapter;
     Calendar calendar = Calendar.getInstance();
 
+    SharedViewModel sharedViewModel ;
     public WeeklyFragment() {
         Log.d("daily","weekly calling ");
         // Required empty public constructor
@@ -45,6 +47,8 @@ public class WeeklyFragment extends Fragment implements HistoryFragment.DateChan
         View view = inflater.inflate(R.layout.fragment_weekly, container, false);
         rvWeekly = view.findViewById(R.id.rvWeekly);
 
+        sharedViewModel = new ViewModelProvider(getParentFragment()).get(SharedViewModel.class);
+
         transactionViewModel = new ViewModelProvider.AndroidViewModelFactory(getActivity().getApplication())
                                 .create(TransactionViewModel.class);
 
@@ -52,14 +56,13 @@ public class WeeklyFragment extends Fragment implements HistoryFragment.DateChan
         rvWeekly.setLayoutManager(new LinearLayoutManager(getContext()));
         rvWeekly.setAdapter(historyTransactionAdapter);
 
-        HistoryFragment historyFragment = (HistoryFragment) getParentFragment();
-        historyFragment.setDateChangeListener(new HistoryFragment.DateChangeListener() {
+        sharedViewModel.getSelectedDate().observe(getViewLifecycleOwner(), new Observer<Date>() {
             @Override
-            public void onDateChanged(Date newDate) {
-                updateWeekly(newDate);
+            public void onChanged(Date date) {
+                Log.d("weekView",date+"");
+                updateWeekly(date);
             }
         });
-
         return view;
     }
 
@@ -85,8 +88,4 @@ public class WeeklyFragment extends Fragment implements HistoryFragment.DateChan
         });
     }
 
-    @Override
-    public void onDateChanged(Date newDate) {
-        updateWeekly(newDate);
-    }
 }

@@ -51,7 +51,11 @@ public class HistoryTransactionAdapter extends RecyclerView.Adapter<HistoryTrans
         Date da = transaction.getDate();
         String d = format.format(da);
         holder.tvDate.setText(d);
-        holder.tvNotes.setText(transaction.getNotes().toString());
+
+        if(transaction.getNotes()!=null && !transaction.getNotes().isEmpty()){
+            holder.tvNotes.setText(transaction.getNotes().toString());
+            holder.tvNotes.setVisibility(View.VISIBLE);
+        }
 
         if (transaction.getType().equals("Income")) {
 

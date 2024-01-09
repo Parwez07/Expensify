@@ -1,11 +1,13 @@
 package com.example.expensify.View.Activity.Fragment;
 
+import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -74,7 +76,7 @@ public class HomeFragment extends Fragment implements AddTransactionFrag.AddTran
         todayExpenses = view.findViewById(R.id.todayExpense);
         pieChart = view.findViewById(R.id.chart);
         layout = view.findViewById(R.id.pieChart);
-
+        calendar = Calendar.getInstance();
 
         pieEntryList = new ArrayList<>();
         helper.add();
@@ -83,10 +85,27 @@ public class HomeFragment extends Fragment implements AddTransactionFrag.AddTran
         rvDaily.setLayoutManager(new LinearLayoutManager(getContext()));
         rvDaily.setAdapter(adapter);
 
+        currDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
+                datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                        calendar.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
+                        calendar.set(Calendar.MONTH, datePicker.getMonth());
+                        calendar.set(Calendar.YEAR, datePicker.getYear());
+                        updateDate();
+                    }
+                });
+                datePickerDialog.show();
+            }
+        });
+
         transactionViewModel = new ViewModelProvider.AndroidViewModelFactory(getActivity().getApplication())
                 .create(TransactionViewModel.class);
 
-        calendar = Calendar.getInstance();
+
         Log.d("week",Calendar.WEEK_OF_MONTH+" "+Calendar.WEEK_OF_YEAR+" "+Calendar.DAY_OF_WEEK_IN_MONTH+" "+Calendar.DAY_OF_WEEK_IN_MONTH);
         updateDate();
 
@@ -208,12 +227,15 @@ public class HomeFragment extends Fragment implements AddTransactionFrag.AddTran
         PieDataSet pieDataSet = new PieDataSet(pieEntryList, "PieChart");
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         pieDataSet.setValueTextColor(Color.BLACK);
+        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setEntryLabelTextSize(15f);
         pieDataSet.setValueTextSize(12f);
 
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
         pieData.isHighlightEnabled();
         pieChart.invalidate();
+
         layout.setVisibility(View.VISIBLE);
 
     }

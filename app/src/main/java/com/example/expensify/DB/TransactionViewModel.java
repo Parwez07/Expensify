@@ -72,4 +72,8 @@ public class TransactionViewModel extends AndroidViewModel {
 
         return repositry.getTransactionOfWeek(firstDay,lastDay);
     }
+    public LiveData<List<Transaction>> getTransactionsByMonth(String date){
+
+        return  repositry.getTransactionByMonth(date);
+    }
 }

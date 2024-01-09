@@ -10,4 +10,9 @@
     <color name="lavender">#8692f7</color>
     <color name="green">#71B12D</color>
     <color name="red">#F4511E</color>
+    <color name="material_dynamic_neutral70">#AAABAE</color>
+    <color name="bottomNav">#C9CBDD</color>
+    <color name="backgroundColor3">#E5E0FF</color>
+    <color name="backgroundColor">#404258</color>
+
 </resources>

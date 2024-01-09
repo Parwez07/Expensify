@@ -1,6 +1,10 @@
 package com.example.expensify.View.Activity.Fragment;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -8,33 +12,28 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.expensify.Adapter.HistoryTransactionAdapter;
 import com.example.expensify.DB.TransactionViewModel;
+import com.example.expensify.Model.SharedViewModel;
 import com.example.expensify.Model.Transaction;
 import com.example.expensify.R;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
-public class DailyFragment extends Fragment implements HistoryFragment.DateChangeListener {
+public class DailyFragment extends Fragment {
 
 
     RecyclerView rvDaily;
     private TransactionViewModel transactionViewModel;
     HistoryTransactionAdapter historyTransactionAdapter;
-    Calendar calendar = Calendar.getInstance() ;
+    Calendar calendar = Calendar.getInstance();
+    SharedViewModel sharedViewModel;
 
     public DailyFragment() {
-        Log.d("daily","daily calling 1");
+        Log.d("daily", "daily calling 1");
         // Required empty public constructor
     }
 
@@ -57,6 +56,7 @@ public class DailyFragment extends Fragment implements HistoryFragment.DateChang
         rvDaily =  view.findViewById(R.id.rvDaily);
 
 
+        sharedViewModel = new ViewModelProvider(getParentFragment()).get(SharedViewModel.class);
 
         transactionViewModel = new ViewModelProvider.AndroidViewModelFactory(getActivity().getApplication())
                 .create(TransactionViewModel.class);
@@ -65,16 +65,14 @@ public class DailyFragment extends Fragment implements HistoryFragment.DateChang
         historyTransactionAdapter = new HistoryTransactionAdapter(getContext());
         rvDaily.setLayoutManager(new LinearLayoutManager(getContext()));
         rvDaily.setAdapter(historyTransactionAdapter);
-
-        HistoryFragment historyFragment = (HistoryFragment) requireParentFragment();
-
-        historyFragment.setDateChangeListener(new HistoryFragment.DateChangeListener() {
+        sharedViewModel.getSelectedDate().observe(getViewLifecycleOwner(), new Observer<Date>() {
             @Override
-            public void onDateChanged(Date newDate) {
-                Log.d("prevHistory","on click "+newDate +" ");
-                updateDate(newDate);
+            public void onChanged(Date date) {
+                Log.d("viewDate", date + "");
+                updateDate(date);
             }
         });
+
         return view;
     }
 
@@ -98,11 +96,6 @@ public class DailyFragment extends Fragment implements HistoryFragment.DateChang
 //        String d = format.format(date.getTime());
 //        String time = format1.format(date.getTime());
 //        Log.d("time22", "date " + d + " time " + time);
-    }
-
-    @Override
-    public void onDateChanged(Date newDate) {
-        updateDate(newDate);
     }
 
 
